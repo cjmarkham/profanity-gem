@@ -4,25 +4,25 @@ describe ProfanityFilter do
 
   describe "#direct_match" do
     it "replaces direct matches" do
-      expect(ProfanityFilter.direct_match("shit")).to eq "*" * 4
+      expect(ProfanityFilter::Direct.new.sanitize("shit")).to eq "*" * 4
     end
   end
 
   describe "#concurrent_letters" do
     it "replaces concurrent letters" do
-      expect(ProfanityFilter.concurrent_letters("shitt")).to eq "shit"
+      expect(ProfanityFilter::ConcurrentLetter.new.sanitize("shitt")).to eq "shit"
     end
   end
 
   describe "#space_replace" do
     it "removes spaces" do
-      expect(ProfanityFilter.space_replace("s h i t")).to eq "*" * 4
+      expect(ProfanityFilter::Space.new.sanitize("s h i t")).to eq "*" * 4
     end
   end
 
   describe "#symbol_replace" do
     it "replaces symbols with letters" do
-      expect(ProfanityFilter.symbol_replace("$h!t")).to eq "shit"
+      expect(ProfanityFilter::Symbol.new.sanitize("$h!t")).to eq "shit"
     end
   end
 

@@ -1,0 +1,4 @@
+@@words = [
+  "shit",
+  "fuck",
+]
