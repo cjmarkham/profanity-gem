@@ -2,26 +2,36 @@ require "spec_helper"
 
 describe ProfanityFilter do
 
-  it "replaces direct matches" do
-    expect(ProfanityFilter.sanitize("shit")).to eq "*" * 4
+  describe "#direct_match" do
+    it "replaces direct matches" do
+      expect(ProfanityFilter.direct_match("shit")).to eq "*" * 4
+    end
   end
 
-  it "replaces concurrent letters" do
-    expect(ProfanityFilter.sanitize("shitt")).to eq "*" * 4
+  describe "#concurrent_letters" do
+    it "replaces concurrent letters" do
+      expect(ProfanityFilter.concurrent_letters("shitt")).to eq "shit"
+    end
   end
 
-  it "removes spaces" do
-    expect(ProfanityFilter.sanitize("s h i t")).to eq "*" * 4
+  describe "#space_replace" do
+    it "removes spaces" do
+      expect(ProfanityFilter.space_replace("s h i t")).to eq "*" * 4
+    end
   end
 
-  it "replaces symbols with letters" do
-    expect(ProfanityFilter.sanitize("$h!t")).to eq "*" * 4
+  describe "#symbol_replace" do
+    it "replaces symbols with letters" do
+      expect(ProfanityFilter.symbol_replace("$h!t")).to eq "shit"
+    end
   end
 
-  it "filters a whole sentence" do
-    sentence = "Dude this fucking shit is dope"
-    expected = "Dude this ****ing **** is dope"
-    expect(ProfanityFilter.sanitize(sentence)).to eq expected
+  describe "#sanitize" do
+    it "filters a whole sentence" do
+      sentence = "Dude this fucking shit is dope"
+      expected = "Dude this ****ing **** is dope"
+      expect(ProfanityFilter.sanitize(sentence)).to eq expected
+    end
   end
 
 end

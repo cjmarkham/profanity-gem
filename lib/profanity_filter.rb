@@ -2,8 +2,6 @@ require "profanity_filter/version"
 
 module ProfanityFilter
 
-  @@original_string = ""
-  @@str = ""
   @@words = [
     "shit",
     "fuck",
@@ -13,24 +11,23 @@ module ProfanityFilter
   @@letters = ["s","i"]
 
   def self.sanitize(string)
-    @@str = string
 
-    self.concurrent_letters
-    self.direct_match
-    self.space_replace
-    self.symbol_replace
+    string = self.concurrent_letters string
+    string = self.direct_match string
+    string = self.space_replace string
+    string = self.symbol_replace string
 
-    @@str
+    string
   end
 
-  def self.concurrent_letters
-    individual_words = @@str.split(" ")
+  def self.concurrent_letters(string)
+    individual_words = string.split(" ")
 
     individual_words.each_with_index do |word, index|
       replaced = word.gsub(/(.)\1+/, "\\1")
 
       if @@words.include? replaced
-        @@str = @@str.gsub(word, replaced)
+        string = string.gsub(word, replaced)
       end
 
       lengths = @@words.map{ |w| w.length }
@@ -39,41 +36,39 @@ module ProfanityFilter
         spaced_word = "#{individual_words[index - 1]}#{word}#{individual_words[index + 1]}"
         spaced_word = spaced_word.gsub(" ", "")
         replaced = spaced_word.gsub(/(.)\1+/, "\\")
-
-        if @@words.include? replaced
-          @@str = @@str.gsub(spaced_word, "*" * replaced.length)
-        end
       end
     end
+
+    string
   end
 
-  def self.direct_match
+  def self.direct_match(string)
     @@words.each do |word|
-      @@str = @@str.gsub(word, "*" * word.length)
+      string = string.gsub(word, "*" * word.length)
     end
+
+    string
   end
 
-  def self.space_replace
-    @@str = @@str.gsub(@@spaces, "-")
+  def self.space_replace(string)
+    string = string.gsub(@@spaces, "-")
 
     @@words.each do |word|
       letters = word.split(//)
       dashed = letters.join("-")
 
-      @@str = @@str.gsub(dashed, "*" * word.length)
+      string = string.gsub(dashed, "*" * word.length)
     end
 
-    @@str = @@str.gsub("-", " ")
+    string.gsub("-", " ")
   end
 
-  def self.symbol_replace
+  def self.symbol_replace(string)
     @@symbols.each_with_index do |symbol, index|
-      @@str = @@str.gsub(symbol, @@letters[index])
-
-      @@words.each do |word|
-        @@str = @@str.gsub(word, "*" * word.length)
-      end
+      string = string.gsub(symbol, @@letters[index])
     end
+
+    string
   end
 
 end
