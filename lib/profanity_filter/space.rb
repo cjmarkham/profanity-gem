@@ -1,15 +1,11 @@
 module ProfanityFilter
   class Space
 
-    @@spaces = /(\s{1,}|\-{1,}|\_{1,}|\|{1,})/
-
     def sanitize(string)
-      string = string.gsub(@@spaces, "-")
+      string = string.gsub(/(\s{1,}|\-{1,}|\_{1,}|\|{1,})/, "-")
 
       @@words.each do |word|
-        letters = word.split(//)
-        dashed = letters.join("-")
-
+        dashed = word.split(//).join("-")
         string = string.gsub(dashed, "*" * word.length)
       end
 
